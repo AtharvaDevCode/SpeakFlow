@@ -2,6 +2,13 @@
 import fs from 'fs';
 import path from 'path';
 
+// IMPORTANT: Configure response limit for large file downloads
+export const config = {
+  api: {
+    responseLimit: false, // Disable the 4MB limit for file downloads
+  },
+};
+
 export default async function handler(req, res) {
   const { id } = req.query;
 
@@ -13,24 +20,20 @@ export default async function handler(req, res) {
   const outputPath = path.join(tempDir, `${id}_dubbed.mp4`);
   const metadataPath = path.join(tempDir, `${id}_metadata.json`);
 
-  // Check if metadata exists
   if (!fs.existsSync(metadataPath)) {
     return res.status(404).json({ message: 'Metadata not found' });
   }
 
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
 
-  // Ensure processing completed
   if (metadata.status !== 'completed') {
     return res.status(400).json({ message: 'Video not processed yet or failed' });
   }
 
-  // Check if output file exists
   if (!fs.existsSync(outputPath)) {
     return res.status(404).json({ message: 'Processed video file not found' });
   }
 
-  // Serve the file
   const stat = fs.statSync(outputPath);
   const fileSize = stat.size;
   const range = req.headers.range;
