@@ -3,3 +3,4 @@
 node_modules/
 .next/
 temp_uploads/
+.git
