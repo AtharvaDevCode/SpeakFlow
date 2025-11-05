@@ -1,6 +1,5 @@
 # .gitignore
 .env.local
-node_modules/
-.next/
-out/
-temp_uploads/
+node_modules
+.next
+temp_uploads
